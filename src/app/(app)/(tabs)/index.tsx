@@ -1,20 +1,27 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, ScrollView, Text, View } from 'react-native';
+import { useBottomTabBarHeight } from 'expo-router/tabs';
+import { useCallback, useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AvisoComunidad } from '../../../components/AvisoComunidad';
 import { Animacion } from '../../../components/Animacion';
 import { Boton } from '../../../components/Boton';
-import { Chip } from '../../../components/Chip';
+import { BotonFlotante } from '../../../components/BotonFlotante';
+import { FilaGrupos } from '../../../components/FilaGrupos';
 import { TarjetaExperiencia } from '../../../components/TarjetaExperiencia';
+import { Vidrio } from '../../../components/Vidrio';
 import { useSession } from '../../../contexts/SessionContext';
-import { GRUPOS, type Grupo } from '../../../lib/constantes';
+import { avisar, confirmar } from '../../../lib/avisos';
+import { reservaInferiorMuro } from '../../../lib/barraTabs';
+import type { Grupo } from '../../../lib/constantes';
 import { mensajeError, nombreDeUsuario } from '../../../lib/errores';
 import { eliminarExperiencia, listarExperiencias, type Experiencia } from '../../../services/experiencias';
 
 export default function Comunidad() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const alturaBarra = useBottomTabBarHeight();
   const { user } = useSession();
 
   const [items, setItems] = useState<Experiencia[]>([]);
@@ -22,7 +29,7 @@ export default function Comunidad() {
   const [cargando, setCargando] = useState(true);
   const [refrescando, setRefrescando] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const primeraCarga = useRef(true);
+  const [primeraCarga, setPrimeraCarga] = useState(true);
 
   const cargar = useCallback(
     async (esRefresco = false) => {
@@ -33,7 +40,7 @@ export default function Comunidad() {
       } catch (e) {
         setError(mensajeError(e));
       } finally {
-        primeraCarga.current = false;
+        setPrimeraCarga(false);
         setCargando(false);
         setRefrescando(false);
       }
@@ -49,92 +56,96 @@ export default function Comunidad() {
   );
 
   const confirmarEliminar = (item: Experiencia) => {
-    Alert.alert('Eliminar experiencia', `¿Quieres eliminar "${item.titulo}"? Esta acción no se puede deshacer.`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await eliminarExperiencia(item.id);
-            setItems((previas) => previas.filter((x) => x.id !== item.id));
-          } catch (e) {
-            Alert.alert('No se pudo eliminar', mensajeError(e));
-          }
-        },
+    confirmar(
+      'Eliminar experiencia',
+      `¿Quieres eliminar "${item.titulo}"? Esta acción no se puede deshacer.`,
+      async () => {
+        try {
+          await eliminarExperiencia(item.id);
+          setItems((previas) => previas.filter((x) => x.id !== item.id));
+        } catch (e) {
+          avisar('No se pudo eliminar', mensajeError(e));
+        }
       },
-    ]);
+      'Eliminar'
+    );
   };
 
   const encabezado = (
-    <View className="mb-4">
-      <Text className="text-3xl font-bold text-zend-700 dark:text-zend-200">
-        Hola, {nombreDeUsuario(user).split(' ')[0]} 👋
-      </Text>
-      <Text className="mt-1 text-base text-tinta/70 dark:text-zend-100/70">
-        Lee, comparte y acompaña a otras personas de la comunidad.
-      </Text>
+    <View>
+      {/* Cabecera en panel de vidrio con animación de conexión */}
+      <Vidrio intensidad={24} className="mb-4 rounded-tarjeta p-5">
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1">
+            <Text className="font-titular text-3xl text-accion dark:text-salvia-300">
+              Hola, {nombreDeUsuario(user).split(' ')[0]} 👋
+            </Text>
+            <Text className="mt-1 font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+              Lee, comparte y acompaña a otras personas de la comunidad.
+            </Text>
+          </View>
+          <Animacion nombre="conexion" size={64} velocidad={0.8} />
+        </View>
+      </Vidrio>
 
-      <View className="mb-4 mt-4 rounded-2xl bg-lavanda-100 px-4 py-3 dark:bg-lavanda-600/20">
-        <Text className="text-xs leading-5 text-lavanda-600 dark:text-lavanda-100">
-          MindZend es una comunidad de apoyo entre personas. No reemplaza la ayuda de un profesional de la salud.
-        </Text>
-      </View>
+      <AvisoComunidad />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-        <Chip texto="Todas" activo={grupo === null} onPress={() => setGrupo(null)} />
-        {GRUPOS.map((g) => (
-          <Chip
-            key={g.nombre}
-            texto={`${g.emoji} ${g.nombre}`}
-            activo={grupo === g.nombre}
-            onPress={() => setGrupo(grupo === g.nombre ? null : g.nombre)}
-          />
-        ))}
-      </ScrollView>
+      <FilaGrupos grupoActual={grupo} onSeleccionar={setGrupo} />
     </View>
   );
 
-  if (cargando && primeraCarga.current) {
+  if (cargando && primeraCarga) {
     return (
-      <View className="flex-1 items-center justify-center bg-zend-50 dark:bg-noche">
+      <View className="flex-1 items-center justify-center bg-fondo">
+        {/* respirar es DEFINITIVA: carga del muro */}
         <Animacion nombre="respirar" size={180} />
-        <Text className="text-base text-tinta/70 dark:text-zend-100/70">Cargando la comunidad…</Text>
+        <Text className="font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+          Cargando la comunidad…
+        </Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-zend-50 dark:bg-noche">
+    <View className="flex-1 bg-fondo">
       <FlatList
         data={items}
         keyExtractor={(i) => i.id}
         refreshing={refrescando}
         onRefresh={() => cargar(true)}
         ListHeaderComponent={encabezado}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: insets.top + 16, paddingBottom: 120 }}
-        renderItem={({ item }) => (
-          <TarjetaExperiencia
-            item={item}
-            esMia={item.user_id === user?.id}
-            onEditar={() => router.push({ pathname: '/editar/[id]', params: { id: item.id } })}
-            onEliminar={() => confirmarEliminar(item)}
-          />
+        contentContainerClassName="px-pantalla"
+        // Excepción Uniwind: reservas dinámicas para que la barra y el botón "+" no tapen la lista
+        contentContainerStyle={{
+          paddingTop: insets.top + 16,
+          paddingBottom: reservaInferiorMuro(insets.bottom, alturaBarra),
+        }}
+        renderItem={({ item, index }) => (
+          <Animated.View entering={FadeInDown.duration(400).delay(Math.min(index, 8) * 50)}>
+            <TarjetaExperiencia
+              item={item}
+              esMia={item.user_id === user?.id}
+              onEditar={() => router.push({ pathname: '/editar/[id]', params: { id: item.id } })}
+              onEliminar={() => confirmarEliminar(item)}
+            />
+          </Animated.View>
         )}
         ListEmptyComponent={
           error ? (
             <View className="items-center py-10">
               <Animacion nombre="alerta" size={120} />
-              <Text className="mb-4 mt-2 text-center text-base text-red-600 dark:text-red-400">{error}</Text>
+              <Text className="mb-4 mt-2 text-center font-cuerpo text-base text-alerta-600 dark:text-alerta-300">
+                {error}
+              </Text>
               <Boton texto="Reintentar" variante="secundario" onPress={() => cargar()} />
             </View>
           ) : (
             <View className="items-center py-8">
-              <Animacion nombre="flotar" size={200} />
-              <Text className="text-center text-xl font-bold text-zend-700 dark:text-zend-200">
+              <Animacion nombre="planta" size={200} />
+              <Text className="text-center font-titular text-xl text-accion dark:text-salvia-300">
                 {grupo ? `Aún no hay experiencias en ${grupo}` : 'Aún no hay experiencias'}
               </Text>
-              <Text className="mb-5 mt-1 text-center text-base text-tinta/70 dark:text-zend-100/70">
+              <Text className="mb-5 mt-1 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
                 Sé la primera persona en compartir la tuya.
               </Text>
               <Boton texto="Compartir experiencia" onPress={() => router.push('/nueva')} />
@@ -143,12 +154,7 @@ export default function Comunidad() {
         }
       />
 
-      <Pressable
-        onPress={() => router.push('/nueva')}
-        className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-zend-600 shadow-lg active:bg-zend-700"
-      >
-        <Ionicons name="add" size={32} color="#ffffff" />
-      </Pressable>
+      <BotonFlotante onPress={() => router.push('/nueva')} />
     </View>
   );
 }

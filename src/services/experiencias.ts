@@ -41,14 +41,16 @@ export async function obtenerExperiencia(id: string): Promise<Experiencia> {
   return data as Experiencia;
 }
 
-// UPDATE
+// UPDATE (con .select('id'): RLS puede filtrar la fila y el update afecta 0 filas sin error)
 export async function actualizarExperiencia(id: string, datos: DatosExperiencia) {
-  const { error } = await supabase.from('experiencias').update(datos).eq('id', id);
+  const { data, error } = await supabase.from('experiencias').update(datos).eq('id', id).select('id');
   if (error) throw error;
+  if (!data?.length) throw new Error('No se pudo guardar: la experiencia no existe o no tienes permiso para editarla.');
 }
 
-// DELETE
+// DELETE (mismo motivo: sin .select('id') un borrado bloqueado por RLS parece exitoso)
 export async function eliminarExperiencia(id: string) {
-  const { error } = await supabase.from('experiencias').delete().eq('id', id);
+  const { data, error } = await supabase.from('experiencias').delete().eq('id', id).select('id');
   if (error) throw error;
+  if (!data?.length) throw new Error('No se pudo eliminar: la experiencia no existe o no tienes permiso.');
 }

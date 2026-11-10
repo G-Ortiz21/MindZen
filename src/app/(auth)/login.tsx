@@ -4,6 +4,7 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { Animacion } from '../../components/Animacion';
 import { Boton } from '../../components/Boton';
 import { Campo } from '../../components/Campo';
+import { FondoOrganico } from '../../components/FondoOrganico';
 import { Pantalla } from '../../components/Pantalla';
 import { correoValido, mensajeError } from '../../lib/errores';
 import { iniciarConGoogle, iniciarSesion } from '../../services/auth';
@@ -46,11 +47,12 @@ export default function Login() {
   };
 
   return (
-    <Pantalla>
+    <Pantalla fondo={<FondoOrganico />}>
       <View className="items-center">
+        {/* animación DEFINITIVA: ondas concéntricas de conexión */}
         <Animacion nombre="conexion" size={190} />
-        <Text className="text-4xl font-bold text-zend-700 dark:text-zend-200">MindZend</Text>
-        <Text className="mb-8 mt-1 text-center text-base text-tinta/70 dark:text-zend-100/70">
+        <Text className="font-titular text-4xl text-accion dark:text-salvia-300">MindZend</Text>
+        <Text className="mb-8 mt-1 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
           Un espacio para compartir cómo te sientes y cuidarte en compañía.
         </Text>
       </View>
@@ -74,16 +76,23 @@ export default function Login() {
         error={errores.clave}
       />
 
-      <Pressable onPress={() => router.push('/olvide-clave')} className="mb-5 self-end">
-        <Text className="text-sm font-semibold text-zend-600 dark:text-zend-400">¿Olvidaste tu contraseña?</Text>
+      <Pressable
+        onPress={() => router.push('/olvide-clave')}
+        accessibilityRole="link"
+        accessibilityLabel="¿Olvidaste tu contraseña?"
+        className="mb-5 min-h-11 items-center justify-center self-end px-1"
+      >
+        <Text className="font-cuerpo-semi text-sm text-accion dark:text-salvia-300">
+          ¿Olvidaste tu contraseña?
+        </Text>
       </Pressable>
 
       <Boton texto="Iniciar sesión" onPress={entrar} cargando={cargando} deshabilitado={cargandoGoogle} />
 
       <View className="my-5 flex-row items-center">
-        <View className="h-px flex-1 bg-zend-200 dark:bg-zend-700" />
-        <Text className="mx-3 text-sm text-tinta/60 dark:text-zend-100/60">o</Text>
-        <View className="h-px flex-1 bg-zend-200 dark:bg-zend-700" />
+        <View className="h-px flex-1 bg-borde dark:bg-bosque-700" />
+        <Text className="mx-3 font-cuerpo text-sm text-texto-suave dark:text-salvia-300">o</Text>
+        <View className="h-px flex-1 bg-borde dark:bg-bosque-700" />
       </View>
 
       <Boton
@@ -95,10 +104,17 @@ export default function Login() {
         deshabilitado={cargando}
       />
 
-      <View className="mt-8 flex-row justify-center">
-        <Text className="text-base text-tinta/70 dark:text-zend-100/70">¿Aún no tienes cuenta? </Text>
-        <Pressable onPress={() => router.push('/registro')}>
-          <Text className="text-base font-bold text-zend-600 dark:text-zend-400">Regístrate</Text>
+      <View className="mt-8 flex-row items-center justify-center">
+        <Text className="font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+          ¿Aún no tienes cuenta?{' '}
+        </Text>
+        <Pressable
+          onPress={() => router.push('/registro')}
+          accessibilityRole="link"
+          accessibilityLabel="Regístrate"
+          className="min-h-11 items-center justify-center px-1"
+        >
+          <Text className="font-cuerpo-bold text-base text-accion dark:text-salvia-300">Regístrate</Text>
         </Pressable>
       </View>
     </Pantalla>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ANIMOS, GRUPOS, type Grupo } from '../lib/constantes';
+import { avisar } from '../lib/avisos';
 import { mensajeError } from '../lib/errores';
 import type { DatosExperiencia } from '../services/experiencias';
 import { Boton } from './Boton';
@@ -33,7 +34,7 @@ export function FormularioExperiencia({ inicial, textoBoton, onEnviar }: Props) 
     try {
       await onEnviar({ titulo: titulo.trim(), contenido: contenido.trim(), grupo, estado_animo: animo });
     } catch (err) {
-      Alert.alert('No se pudo guardar', mensajeError(err));
+      avisar('No se pudo guardar', mensajeError(err));
     } finally {
       setEnviando(false);
     }
@@ -54,7 +55,7 @@ export function FormularioExperiencia({ inicial, textoBoton, onEnviar }: Props) 
         etiqueta="Tu experiencia"
         value={contenido}
         onChangeText={setContenido}
-        placeholder="Cuéntalo con tus palabras…"
+        placeholder="Cuéntalo con tus palabras ✨"
         autoCapitalize="sentences"
         multiline
         textAlignVertical="top"
@@ -62,26 +63,41 @@ export function FormularioExperiencia({ inicial, textoBoton, onEnviar }: Props) 
         error={errores.contenido}
       />
 
-      <Text className="mb-2 text-sm font-medium text-zend-700 dark:text-zend-200">Grupo</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+      <Text className="mb-2 font-cuerpo-semi text-sm text-texto-suave dark:text-salvia-300">Grupo</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="gap-2 pb-1"
+      >
         {GRUPOS.map((g) => (
-          <Chip key={g.nombre} texto={`${g.emoji} ${g.nombre}`} activo={grupo === g.nombre} onPress={() => setGrupo(g.nombre)} />
+          <Chip
+            key={g.nombre}
+            texto={`${g.emoji} ${g.nombre}`}
+            activo={grupo === g.nombre}
+            onPress={() => setGrupo(g.nombre)}
+          />
         ))}
       </ScrollView>
-      {errores.grupo ? <Text className="mt-1 text-sm text-red-600 dark:text-red-400">{errores.grupo}</Text> : null}
+      {errores.grupo ? (
+        <Text className="mt-1 font-cuerpo text-sm text-alerta-600 dark:text-alerta-300">{errores.grupo}</Text>
+      ) : null}
 
-      <Text className="mb-2 mt-5 text-sm font-medium text-zend-700 dark:text-zend-200">
+      <Text className="mb-2 mt-5 font-cuerpo-semi text-sm text-texto-suave dark:text-salvia-300">
         ¿Cómo te sentías? (opcional)
       </Text>
+      {/* Selector de ánimo con neumorfismo discreto (relieve + hundido al activar) */}
       <View className="mb-6 flex-row justify-between">
         {ANIMOS.map((a) => (
           <Pressable
             key={a.emoji}
             onPress={() => setAnimo(animo === a.emoji ? null : a.emoji)}
-            className={`h-14 w-14 items-center justify-center rounded-2xl border ${
+            accessibilityRole="button"
+            accessibilityState={{ selected: animo === a.emoji }}
+            accessibilityLabel={`Me siento ${a.etiqueta}`}
+            className={`h-14 w-14 items-center justify-center rounded-suave border active:scale-95 ${
               animo === a.emoji
-                ? 'border-zend-600 bg-zend-100 dark:bg-zend-700/40'
-                : 'border-zend-200 bg-white dark:border-zend-700 dark:bg-noche-card'
+                ? 'border-accion bg-crema-100 shadow-relieve-hundido dark:bg-bosque-700'
+                : 'border-borde bg-superficie shadow-relieve dark:border-bosque-700 dark:bg-bosque-800 dark:shadow-relieve-oscuro'
             }`}
           >
             <Text className="text-2xl">{a.emoji}</Text>

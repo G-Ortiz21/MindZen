@@ -4,7 +4,9 @@ import { Animacion } from '../../../components/Animacion';
 import { Boton } from '../../../components/Boton';
 import { Campo } from '../../../components/Campo';
 import { ExitoOverlay } from '../../../components/ExitoOverlay';
+import { FondoOrganico } from '../../../components/FondoOrganico';
 import { Pantalla } from '../../../components/Pantalla';
+import { Vidrio } from '../../../components/Vidrio';
 import { useSession } from '../../../contexts/SessionContext';
 import { mensajeError, nombreDeUsuario } from '../../../lib/errores';
 import { actualizarClave, cerrarSesion } from '../../../services/auth';
@@ -51,7 +53,7 @@ export default function Perfil() {
 
     // En web Alert.alert no está implementado (no hace nada): usamos window.confirm
     if (Platform.OS === 'web') {
-      if (window.confirm('Cerrar sesión\n¿Quieres salir de tu cuenta?')) ejecutar();
+      if (window.confirm('Cerrar sesión\n\n¿Quieres salir de tu cuenta?')) ejecutar();
       return;
     }
     Alert.alert('Cerrar sesión', '¿Quieres salir de tu cuenta?', [
@@ -62,21 +64,24 @@ export default function Perfil() {
 
   return (
     <View className="flex-1">
-      <Pantalla>
+      <Pantalla fondo={<FondoOrganico />}>
         <View className="items-center">
+          {/* animación DEFINITIVA: ondas concéntricas de perfil */}
           <Animacion nombre="conexion" size={130} />
-          <View className="-mt-2 h-20 w-20 items-center justify-center rounded-full bg-lavanda-100 dark:bg-lavanda-600/30">
-            <Text className="text-3xl font-bold text-lavanda-600 dark:text-lavanda-100">
+          <View className="-mt-2 h-20 w-20 items-center justify-center rounded-full border-2 border-vidrio-borde bg-lavanda-100 dark:bg-lavanda-600/30">
+            <Text className="font-titular text-3xl text-lavanda-600 dark:text-lavanda-200">
               {nombre.charAt(0).toUpperCase()}
             </Text>
           </View>
-          <Text className="mt-3 text-2xl font-bold text-zend-700 dark:text-zend-200">{nombre}</Text>
-          <Text className="mb-8 text-base text-tinta/70 dark:text-zend-100/70">{user?.email}</Text>
+          <Text className="mt-3 font-titular text-2xl text-accion dark:text-salvia-300">{nombre}</Text>
+          <Text className="mb-8 font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+            {user?.email}
+          </Text>
         </View>
 
         {esCorreo ? (
-          <View className="mb-6 rounded-3xl bg-white p-5 dark:bg-noche-card">
-            <Text className="mb-4 text-lg font-bold text-tinta dark:text-zend-50">Cambiar contraseña</Text>
+          <Vidrio intensidad={20} className="mb-6 rounded-tarjeta p-5">
+            <Text className="mb-4 font-titular text-lg text-texto">Cambiar contraseña</Text>
             <Campo
               etiqueta="Nueva contraseña"
               value={clave}
@@ -94,18 +99,20 @@ export default function Perfil() {
               error={errores.clave2}
             />
             <Boton texto="Actualizar contraseña" onPress={cambiarClave} cargando={cargando} />
-          </View>
+          </Vidrio>
         ) : (
-          <View className="mb-6 rounded-3xl bg-white p-5 dark:bg-noche-card">
-            <Text className="text-base text-tinta/80 dark:text-zend-100/80">
+          <Vidrio intensidad={20} className="mb-6 rounded-tarjeta p-5">
+            <Text className="font-cuerpo text-base text-texto-suave dark:text-salvia-300">
               Iniciaste sesión con Google, así que tu contraseña se administra desde tu cuenta de Google.
             </Text>
-          </View>
+          </Vidrio>
         )}
 
         <Boton texto="Cerrar sesión" variante="peligro" onPress={salir} />
       </Pantalla>
-      {listo ? <ExitoOverlay mensaje="¡Contraseña actualizada!" onFin={() => setListo(false)} /> : null}
+      {listo ? (
+        <ExitoOverlay mensaje="¡Contraseña actualizada!" animacion="escudo" onFin={() => setListo(false)} />
+      ) : null}
     </View>
   );
 }

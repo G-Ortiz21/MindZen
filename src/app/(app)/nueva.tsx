@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { ExitoOverlay } from '../../components/ExitoOverlay';
+import { FondoOrganico } from '../../components/FondoOrganico';
 import { FormularioExperiencia } from '../../components/FormularioExperiencia';
 import { Pantalla } from '../../components/Pantalla';
 import { useSession } from '../../contexts/SessionContext';
@@ -15,7 +16,7 @@ export default function NuevaExperiencia() {
 
   return (
     <View className="flex-1">
-      <Pantalla conEncabezado>
+      <Pantalla conEncabezado fondo={<FondoOrganico />}>
         <FormularioExperiencia
           textoBoton="Publicar"
           onEnviar={async (datos) => {

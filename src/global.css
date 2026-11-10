@@ -1,19 +1,114 @@
 @import 'tailwindcss';
 @import 'uniwind';
 
-/* Paleta "MindZend": verdes menta suaves + lavanda */
+/* =============================================================================
+   MindZend · Sistema de diseño (tokens)
+   Uniwind es la fuente de verdad: todo el estilo de la app sale de aquí.
+   Paletas: Salvia · Lavanda · Crema · Bosque + acentos Durazno y Lima
+   ========================================================================== */
+
 @theme {
-  --color-zend-50: #f1f8f5;
-  --color-zend-100: #dcefe7;
-  --color-zend-200: #b9dfd0;
-  --color-zend-400: #5bb59a;
-  --color-zend-500: #3a9c80;
-  --color-zend-600: #2c7f68;
-  --color-zend-700: #236654;
-  --color-lavanda-100: #ece8f7;
-  --color-lavanda-400: #a593db;
-  --color-lavanda-600: #6f5bb5;
-  --color-tinta: #1d2b27;
-  --color-noche: #0f1a17;
-  --color-noche-card: #182622;
+  /* ---------- Salvia (neutros verdosos) ---------- */
+  --color-salvia-50: #f3f6f1;
+  --color-salvia-100: #e4ebdf;
+  --color-salvia-200: #ccd9c4;
+  --color-salvia-300: #b2c6a8;
+  --color-salvia-500: #7c9871;
+
+  /* ---------- Lavanda ---------- */
+  --color-lavanda-100: #eee9f8;
+  --color-lavanda-200: #ddd3f1;
+  --color-lavanda-300: #c6b8e8;
+  --color-lavanda-400: #ad9bdb;
+  --color-lavanda-600: #7a64b8;
+
+  /* ---------- Crema (fondos claros) ---------- */
+  --color-crema-50: #fffdf8;
+  --color-crema-100: #fbf6ea;
+  --color-crema-200: #f5ecd7;
+
+  /* ---------- Bosque (texto y acción principal) ---------- */
+  --color-bosque-600: #2f5d46;
+  --color-bosque-700: #24493a;
+  --color-bosque-800: #1b3a2d;
+  --color-bosque-900: #12271f;
+
+  /* ---------- Acentos (solo detalles: puntos, badges, subrayados) ---------- */
+  --color-durazno: #ffb38a;
+  --color-durazno-200: #ffd9c2;
+  --color-lima: #c9e265;
+
+  /* ---------- Alerta (errores y acciones destructivas,hereda del rojo de la app) ---------- */
+  --color-alerta-50: #fdecea;
+  --color-alerta-200: #f5b8b0;
+  --color-alerta-300: #f0a79c;
+  --color-alerta-600: #c0392b;
+  --color-alerta-700: #a93327;
+  --color-alerta-900: #4a1712;
+
+  /* ---------- Radios orgánicos ---------- */
+  --radius-pastilla: 999px;
+  --radius-tarjeta: 28px;
+  --radius-suave: 20px;
+
+  /* ---------- Espaciado de pantalla ---------- */
+  --spacing-pantalla: 24px;
+  --spacing-seccion: 32px;
+
+  /* ---------- Tipografía (cargada con expo-font en src/app/_layout.tsx) ----------
+     Cada peso es su propio "family" (patrón de @expo-google-fonts), por eso
+     se usa font-titular / font-cuerpo-* y no font-bold + fontWeight. */
+  --font-titular: 'Fraunces_700Bold';
+  --font-titular-suave: 'Fraunces_600SemiBold';
+  --font-cuerpo: 'Nunito_400Regular';
+  --font-cuerpo-semi: 'Nunito_600SemiBold';
+  --font-cuerpo-bold: 'Nunito_700Bold';
+
+  /* ---------- Sombras (tarjetas, flotantes y neumorfismo discreto) ---------- */
+  --shadow-tarjeta: 0 1px 2px rgba(18, 39, 31, 0.05), 0 10px 24px rgba(18, 39, 31, 0.07);
+  --shadow-flotante: 0 10px 28px rgba(18, 39, 31, 0.18);
+  --shadow-relieve: 2px 2px 6px rgba(18, 39, 31, 0.12), -2px -2px 6px rgba(255, 255, 255, 0.9);
+  --shadow-relieve-hundido: inset 2px 2px 6px rgba(18, 39, 31, 0.14),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.85);
+  --shadow-relieve-oscuro: 2px 2px 6px rgba(0, 0, 0, 0.45), -2px -2px 6px rgba(255, 255, 255, 0.05);
+}
+
+/* ---------------------------------------------------------------------------
+   Colores semánticos por tema (light / dark).
+   Uso: bg-fondo · text-texto · bg-accion · border-borde ...
+   También se leen desde JS con useCSSVariable('--color-accion') donde la
+   prop no acepta className (p. ej. tint de los iconos de la barra de tabs).
+   ------------------------------------------------------------------------- */
+@layer theme {
+  :root {
+    @variant light {
+      --color-fondo: #fffdf8;
+      --color-fondo-suave: #fbf6ea;
+      --color-superficie: #ffffff;
+      --color-texto: #1b3a2d;
+      --color-texto-suave: #2f5d46;
+      --color-texto-tenue: rgba(47, 93, 70, 0.6);
+      --color-borde: #e4ebdf;
+      --color-accion: #2f5d46;
+      --color-accion-alto: #24493a;
+      --color-texto-invertido: #fffdf8;
+      --color-vidrio: rgba(255, 255, 255, 0.65);
+      --color-vidrio-borde: rgba(255, 255, 255, 0.85);
+    }
+
+    @variant dark {
+      --color-fondo: #12271f;
+      --color-fondo-suave: #1b3a2d;
+      --color-superficie: #1b3a2d;
+      --color-texto: #f3f6f1;
+      --color-texto-suave: #b2c6a8;
+      --color-texto-tenue: rgba(178, 198, 168, 0.7);
+      --color-borde: #2f5d46;
+      --color-accion: #7c9871;
+      --color-accion-alto: #b2c6a8;
+      --color-texto-invertido: #12271f;
+      --color-vidrio: rgba(18, 39, 31, 0.6);
+      --color-vidrio-borde: rgba(178, 198, 168, 0.25);
+    }
+  }
 }

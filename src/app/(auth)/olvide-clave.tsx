@@ -4,6 +4,7 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { Animacion } from '../../components/Animacion';
 import { Boton } from '../../components/Boton';
 import { Campo } from '../../components/Campo';
+import { FondoOrganico } from '../../components/FondoOrganico';
 import { Pantalla } from '../../components/Pantalla';
 import { correoValido, mensajeError } from '../../lib/errores';
 import { recuperarClave } from '../../services/auth';
@@ -30,14 +31,15 @@ export default function OlvideClave() {
   };
 
   return (
-    <Pantalla>
+    <Pantalla fondo={<FondoOrganico />}>
       <View className="flex-1 justify-center">
         <View className="items-center">
-          <Animacion nombre={enviado ? 'exito' : 'respirar'} size={enviado ? 150 : 170} loop={!enviado} />
-          <Text className="mt-2 text-center text-3xl font-bold text-zend-700 dark:text-zend-200">
+          {/* respirar es DEFINITIVA (pantalla "Recupera tu contraseña") */}
+          <Animacion nombre={enviado ? 'correo' : 'respirar'} size={enviado ? 150 : 170} loop={!enviado} />
+          <Text className="mt-2 text-center font-titular text-3xl text-accion dark:text-salvia-300">
             {enviado ? 'Revisa tu correo' : 'Recupera tu contraseña'}
           </Text>
-          <Text className="mb-8 mt-2 text-center text-base text-tinta/70 dark:text-zend-100/70">
+          <Text className="mb-8 mt-2 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
             {enviado
               ? `Te enviamos un enlace a ${email.trim()}. Ábrelo desde este teléfono para elegir una nueva contraseña.`
               : 'Escribe tu correo y te enviaremos un enlace para crear una nueva.'}
@@ -59,8 +61,15 @@ export default function OlvideClave() {
           </>
         ) : null}
 
-        <Pressable onPress={() => router.replace('/login')} className="mt-6 items-center">
-          <Text className="text-base font-bold text-zend-600 dark:text-zend-400">Volver a iniciar sesión</Text>
+        <Pressable
+          onPress={() => router.replace('/login')}
+          accessibilityRole="link"
+          accessibilityLabel="Volver a iniciar sesión"
+          className="mt-6 min-h-11 items-center justify-center"
+        >
+          <Text className="font-cuerpo-bold text-base text-accion dark:text-salvia-300">
+            Volver a iniciar sesión
+          </Text>
         </Pressable>
       </View>
     </Pantalla>

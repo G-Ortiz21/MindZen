@@ -4,6 +4,7 @@ import { Alert, Text, View } from 'react-native';
 import { Animacion } from '../../components/Animacion';
 import { Boton } from '../../components/Boton';
 import { Campo } from '../../components/Campo';
+import { FondoOrganico } from '../../components/FondoOrganico';
 import { Pantalla } from '../../components/Pantalla';
 import { useSession } from '../../contexts/SessionContext';
 import { mensajeError } from '../../lib/errores';
@@ -20,13 +21,13 @@ export default function ResetPassword() {
   // Sin enlace de recuperación activo = enlace inválido o vencido
   if (!recuperando) {
     return (
-      <Pantalla>
+      <Pantalla fondo={<FondoOrganico />}>
         <View className="flex-1 items-center justify-center">
           <Animacion nombre="alerta" size={140} />
-          <Text className="mt-4 text-center text-2xl font-bold text-zend-700 dark:text-zend-200">
+          <Text className="mt-4 text-center font-titular text-2xl text-alerta-700 dark:text-alerta-300">
             Enlace no válido
           </Text>
-          <Text className="mb-8 mt-2 text-center text-base text-tinta/70 dark:text-zend-100/70">
+          <Text className="mb-8 mt-2 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
             El enlace venció o ya se usó. Solicita uno nuevo.
           </Text>
           <View className="w-full">
@@ -37,13 +38,15 @@ export default function ResetPassword() {
     );
   }
 
-  // El enlace se está validando
+  // El enlace se está validando (respirar es DEFINITIVA en validación)
   if (!session) {
     return (
-      <Pantalla>
+      <Pantalla fondo={<FondoOrganico />}>
         <View className="flex-1 items-center justify-center">
           <Animacion nombre="respirar" size={180} />
-          <Text className="text-base text-tinta/70 dark:text-zend-100/70">Validando enlace…</Text>
+          <Text className="font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+            Validando enlace…
+          </Text>
         </View>
       </Pantalla>
     );
@@ -69,14 +72,15 @@ export default function ResetPassword() {
   };
 
   return (
-    <Pantalla>
+    <Pantalla fondo={<FondoOrganico />}>
       <View className="flex-1 justify-center">
         <View className="items-center">
+          {/* animación DEFINITIVA: ondas concéntricas */}
           <Animacion nombre="conexion" size={150} />
-          <Text className="text-center text-3xl font-bold text-zend-700 dark:text-zend-200">
+          <Text className="text-center font-titular text-3xl text-accion dark:text-salvia-300">
             Nueva contraseña
           </Text>
-          <Text className="mb-8 mt-2 text-center text-base text-tinta/70 dark:text-zend-100/70">
+          <Text className="mb-8 mt-2 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
             Elige una contraseña que recuerdes.
           </Text>
         </View>

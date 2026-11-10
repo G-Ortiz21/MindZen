@@ -4,6 +4,7 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { Animacion } from '../../components/Animacion';
 import { Boton } from '../../components/Boton';
 import { Campo } from '../../components/Campo';
+import { FondoOrganico } from '../../components/FondoOrganico';
 import { Pantalla } from '../../components/Pantalla';
 import { correoValido, mensajeError } from '../../lib/errores';
 import { registrar } from '../../services/auth';
@@ -41,13 +42,13 @@ export default function Registro() {
 
   if (correoEnviado) {
     return (
-      <Pantalla>
+      <Pantalla fondo={<FondoOrganico />}>
         <View className="flex-1 items-center justify-center">
-          <Animacion nombre="exito" size={160} loop={false} />
-          <Text className="mt-4 text-center text-2xl font-bold text-zend-700 dark:text-zend-200">
+          <Animacion nombre="correo" size={160} loop={false} />
+          <Text className="mt-4 text-center font-titular text-2xl text-accion dark:text-salvia-300">
             ¡Cuenta creada!
           </Text>
-          <Text className="mb-8 mt-2 text-center text-base text-tinta/70 dark:text-zend-100/70">
+          <Text className="mb-8 mt-2 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
             Te enviamos un correo a {email.trim()}. Ábrelo para confirmar tu cuenta y luego inicia sesión.
           </Text>
           <View className="w-full">
@@ -59,11 +60,11 @@ export default function Registro() {
   }
 
   return (
-    <Pantalla>
+    <Pantalla fondo={<FondoOrganico />}>
       <View className="mb-6 items-center">
-        <Animacion nombre="flotar" size={140} />
-        <Text className="text-3xl font-bold text-zend-700 dark:text-zend-200">Crea tu cuenta</Text>
-        <Text className="mt-1 text-center text-base text-tinta/70 dark:text-zend-100/70">
+        <Animacion nombre="conexion" size={140} />
+        <Text className="font-titular text-3xl text-accion dark:text-salvia-300">Crea tu cuenta</Text>
+        <Text className="mt-1 text-center font-cuerpo text-base text-texto-suave dark:text-salvia-300">
           Únete a una comunidad que te escucha.
         </Text>
       </View>
@@ -106,10 +107,17 @@ export default function Registro() {
         <Boton texto="Crear cuenta" onPress={crearCuenta} cargando={cargando} />
       </View>
 
-      <View className="mt-8 flex-row justify-center">
-        <Text className="text-base text-tinta/70 dark:text-zend-100/70">¿Ya tienes cuenta? </Text>
-        <Pressable onPress={() => router.replace('/login')}>
-          <Text className="text-base font-bold text-zend-600 dark:text-zend-400">Inicia sesión</Text>
+      <View className="mt-8 flex-row items-center justify-center">
+        <Text className="font-cuerpo text-base text-texto-suave dark:text-salvia-300">
+          ¿Ya tienes cuenta?{' '}
+        </Text>
+        <Pressable
+          onPress={() => router.replace('/login')}
+          accessibilityRole="link"
+          accessibilityLabel="Inicia sesión"
+          className="min-h-11 items-center justify-center px-1"
+        >
+          <Text className="font-cuerpo-bold text-base text-accion dark:text-salvia-300">Inicia sesión</Text>
         </Pressable>
       </View>
     </Pantalla>

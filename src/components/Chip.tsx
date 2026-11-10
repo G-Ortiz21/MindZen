@@ -6,13 +6,20 @@ export function Chip({ texto, activo, onPress }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className={`rounded-full border px-4 py-2 ${
+      accessibilityRole="button"
+      accessibilityState={{ selected: activo }}
+      accessibilityLabel={texto}
+      className={`min-h-11 items-center justify-center rounded-pastilla border px-4 py-2.5 active:scale-95 ${
         activo
-          ? 'border-zend-600 bg-zend-600'
-          : 'border-zend-200 bg-white dark:border-zend-700 dark:bg-noche-card'
+          ? 'border-accion bg-accion active:bg-accion-alto'
+          : 'border-borde bg-superficie shadow-relieve active:bg-crema-100 dark:border-bosque-700 dark:bg-bosque-800 dark:shadow-relieve-oscuro dark:active:bg-bosque-700'
       }`}
     >
-      <Text className={`text-sm font-medium ${activo ? 'text-white' : 'text-zend-700 dark:text-zend-200'}`}>
+      <Text
+        className={`font-cuerpo-semi text-sm ${
+          activo ? 'text-texto-invertido' : 'text-texto-suave dark:text-salvia-300'
+        }`}
+      >
         {texto}
       </Text>
     </Pressable>

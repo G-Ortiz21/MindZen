@@ -5,16 +5,18 @@ type Props = TextInputProps & { etiqueta: string; error?: string };
 export function Campo({ etiqueta, error, className = '', ...props }: Props) {
   return (
     <View className="mb-4">
-      <Text className="mb-1.5 text-sm font-medium text-zend-700 dark:text-zend-200">{etiqueta}</Text>
+      <Text className="mb-1.5 font-cuerpo-semi text-sm text-texto-suave dark:text-salvia-300">{etiqueta}</Text>
       <TextInput
-        placeholderTextColor="#8aa59c"
+        placeholderTextColorClassName="accent-texto-tenue"
         autoCapitalize="none"
-        className={`rounded-2xl border bg-white px-4 py-3.5 text-base text-tinta dark:bg-noche-card dark:text-zend-50 ${
-          error ? 'border-red-400' : 'border-zend-200 dark:border-zend-700'
+        className={`rounded-suave border bg-superficie px-4 py-3.5 font-cuerpo text-base text-texto focus:border-accion ${
+          error ? 'border-alerta-600 dark:border-alerta-300' : 'border-borde dark:border-bosque-700'
         } ${className}`}
         {...props}
       />
-      {error ? <Text className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</Text> : null}
+      {error ? (
+        <Text className="mt-1 font-cuerpo text-sm text-alerta-600 dark:text-alerta-300">{error}</Text>
+      ) : null}
     </View>
   );
 }
